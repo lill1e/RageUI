@@ -289,4 +289,11 @@ RageUI.BadgeStyle = {
             BadgeDictionary = "mpawardcasino"
         }
     end,
+    Debug = function()
+        return {
+            BadgeTexture = "timerbars",
+            BadgeDictionary = "circle_checkpoints",
+            BadgeColour = Selected and { R = 102, G = 255, B = 102, A = 185 } or { R = 255, G = 51, B = 51, A = 185 }
+        }
+    end,
 }
