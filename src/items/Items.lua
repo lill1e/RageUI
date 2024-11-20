@@ -40,6 +40,20 @@ local function StyleCheckBox(Selected, Checked, Box, BoxSelect, OffSet)
             Graphics.Sprite("commonmenu", ItemsSettings.CheckBox.Textures[3], CurrentMenu.X + 380 + CurrentMenu.WidthOffset - OffSet, CurrentMenu.Y + -6 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 50, 50)
         end
     end
+
+end
+
+local function StyleStopLight(Selected, Checked, Box, BoxSelect, OffSet)
+    local CurrentMenu = RageUI.CurrentMenu;
+    if OffSet == nil then
+        OffSet = 0
+    end
+    if Checked then
+        Graphics.Sprite("timerbars", "circle_checkpoints", CurrentMenu.X + 395 + CurrentMenu.WidthOffset, CurrentMenu.Y + 10 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 17, 17, 0, 102, 255, 102, 185)
+    else
+        Graphics.Sprite("timerbars", "circle_checkpoints", CurrentMenu.X + 395 + CurrentMenu.WidthOffset, CurrentMenu.Y + 10 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 17, 17, 0, 255, 51, 51, 185)
+    end
+
 end
 
 ---@class Items
@@ -196,6 +210,104 @@ function Items:CheckBox(Label, Description, Checked, Style, Actions)
             end
         else
             StyleCheckBox(Active, Checked, 2, 4, BoxOffset)
+        end
+
+        if (Active) and (CurrentMenu.Controls.Select.Active) then
+            Selected = true;
+            Checked = not Checked
+            Audio.PlaySound(RageUI.Settings.Audio.Select.audioName, RageUI.Settings.Audio.Select.audioRef)
+        end
+
+        if (Active) then
+            Actions(Selected, Checked)
+            RageUI.ItemsDescription(Description)
+        end
+
+        RageUI.ItemOffset = RageUI.ItemOffset + 38
+    end
+    RageUI.Options = RageUI.Options + 1
+end
+
+---CheckBox
+---@param Label string
+---@param Description string
+---@param Checked boolean
+---@param Style table
+---@param Actions fun(onSelected:boolean, IsChecked:boolean)
+function Items:StopLight(Label, Description, Checked, Style, Actions)
+    local CurrentMenu = RageUI.CurrentMenu;
+
+    local Option = RageUI.Options + 1
+    if CurrentMenu.Pagination.Minimum <= Option and CurrentMenu.Pagination.Maximum >= Option then
+
+        local Active = CurrentMenu.Index == Option;
+        local Selected = false;
+        local LeftBadgeOffset = ((Style.LeftBadge == RageUI.BadgeStyle.None or Style.LeftBadge == nil) and 0 or 27)
+        local RightBadgeOffset = ((Style.RightBadge == RageUI.BadgeStyle.None or Style.RightBadge == nil) and 0 or 32)
+        local BoxOffset = 0
+        RageUI.ItemsSafeZone(CurrentMenu)
+
+        if (Active) then
+            Graphics.Sprite("commonmenu", "gradient_nav", CurrentMenu.X, CurrentMenu.Y + 0 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 431 + CurrentMenu.WidthOffset, 38)
+        end
+
+        if (Style.IsDisabled == nil) or not (Style.IsDisabled) then
+            if Active then
+                Graphics.Text(Label, CurrentMenu.X + 8 + LeftBadgeOffset, CurrentMenu.Y + 3 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 0, 0.33, 0, 0, 0, 255)
+            else
+                Graphics.Text(Label, CurrentMenu.X + 8 + LeftBadgeOffset, CurrentMenu.Y + 3 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 0, 0.33, 245, 245, 245, 255)
+            end
+            if Style.LeftBadge ~= nil then
+                if Style.LeftBadge ~= RageUI.BadgeStyle.None then
+                    local BadgeData = Style.LeftBadge(Active)
+                    Graphics.Sprite(BadgeData.BadgeDictionary or "commonmenu", BadgeData.BadgeTexture or "", CurrentMenu.X, CurrentMenu.Y + -2 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 40, 40, 0, BadgeData.BadgeColour and BadgeData.BadgeColour.R or 255, BadgeData.BadgeColour and BadgeData.BadgeColour.G or 255, BadgeData.BadgeColour and BadgeData.BadgeColour.B or 255, BadgeData.BadgeColour and BadgeData.BadgeColour.A or 255)
+                end
+            end
+            if Style.RightBadge ~= nil then
+                if Style.RightBadge ~= RageUI.BadgeStyle.None then
+                    local BadgeData = Style.RightBadge(Active)
+                    Graphics.Sprite(BadgeData.BadgeDictionary or "commonmenu", BadgeData.BadgeTexture or "", CurrentMenu.X + 385 + CurrentMenu.WidthOffset, CurrentMenu.Y + -2 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 40, 40, 0, BadgeData.BadgeColour and BadgeData.BadgeColour.R or 255, BadgeData.BadgeColour and BadgeData.BadgeColour.G or 255, BadgeData.BadgeColour and BadgeData.BadgeColour.B or 255, BadgeData.BadgeColour and BadgeData.BadgeColour.A or 255)
+                end
+            end
+        else
+            local LeftBadge = RageUI.BadgeStyle.Lock
+            LeftBadgeOffset = ((LeftBadge == RageUI.BadgeStyle.None or LeftBadge == nil) and 0 or 27)
+
+            if Active then
+                Graphics.Text(Label, CurrentMenu.X + 8 + LeftBadgeOffset, CurrentMenu.Y + 3 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 0, 0.33, 0, 0, 0, 255)
+            else
+                Graphics.Text(Label, CurrentMenu.X + 8 + LeftBadgeOffset, CurrentMenu.Y + 3 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 0, 0.33, 163, 159, 148, 255)
+            end
+
+            if LeftBadge ~= RageUI.BadgeStyle.None and LeftBadge ~= nil then
+                local BadgeData = LeftBadge(Active)
+                Graphics.Sprite(BadgeData.BadgeDictionary or "commonmenu", BadgeData.BadgeTexture or "", CurrentMenu.X, CurrentMenu.Y + -2 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 40, 40, 0, BadgeData.BadgeColour.R or 255, BadgeData.BadgeColour.G or 255, BadgeData.BadgeColour.B or 255, BadgeData.BadgeColour.A or 255)
+            end
+        end
+
+        if (Active) then
+            if Style.RightLabel ~= nil and Style.RightLabel ~= "" then
+                Graphics.Text(Style.RightLabel, CurrentMenu.X + 420 - RightBadgeOffset + CurrentMenu.WidthOffset, CurrentMenu.Y + 4 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 0, 0.35, 0, 0, 0, 255, 2)
+                BoxOffset = MeasureStringWidth(Style.RightLabel, 0, 0.35)
+            end
+        else
+            if Style.RightLabel ~= nil and Style.RightLabel ~= "" then
+                Graphics.Text(Style.RightLabel, CurrentMenu.X + 420 - RightBadgeOffset + CurrentMenu.WidthOffset, CurrentMenu.Y + 4 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 0, 0.35, 245, 245, 245, 255, 2)
+                BoxOffset = MeasureStringWidth(Style.RightLabel, 0, 0.35)
+            end
+        end
+
+        BoxOffset = RightBadgeOffset + BoxOffset
+        if Style.Style ~= nil then
+            if Style.Style == 1 then
+                StyleStopLight(Active, Checked, 2, 4, BoxOffset)
+            elseif Style.Style == 2 then
+                StyleStopLight(Active, Checked, 5, 6, BoxOffset)
+            else
+                StyleStopLight(Active, Checked, 2, 4, BoxOffset)
+            end
+        else
+            StyleStopLight(Active, Checked, 2, 4, BoxOffset)
         end
 
         if (Active) and (CurrentMenu.Controls.Select.Active) then
