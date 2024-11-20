@@ -203,6 +203,10 @@ RageUI.Settings = {
             Background = { Width = 431, Height = 107 },
             Text = { X = 215, Y = 20, Scale = 1.15 },
         },
+        TitleAlt = {
+            Background = { Width = 0, Height = 0 },
+            Text = { X = 215, Y = 20, Scale = 1.15 },
+        },
         Subtitle = {
             Background = { Width = 431, Height = 37 },
             Text = { X = 8, Y = 3, Scale = 0.35 },
