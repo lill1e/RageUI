@@ -34,7 +34,7 @@ function RageUI.CreateMenu(Title, Subtitle, X, Y, TextureDictionary, TextureName
 	Menu.Title = Title or ""
 	Menu.TitleFont = 1
 	Menu.TitleScale = 1.2
-	Menu.Subtitle = string.upper(Subtitle) or nil
+	Menu.Subtitle = Subtitle or nil
 	Menu.SubtitleHeight = -37
 	Menu.Description = nil
 	Menu.DescriptionHeight = RageUI.Settings.Items.Description.Background.Height
@@ -99,7 +99,7 @@ end
 function RageUI.CreateSubMenu(ParentMenu, Title, Subtitle, X, Y, TextureDictionary, TextureName, R, G, B, A)
 	if ParentMenu ~= nil then
 		if ParentMenu() then
-			local Menu = RageUI.CreateMenu(Title or ParentMenu.Title, string.upper(Subtitle) or string.upper(ParentMenu.Subtitle), X or ParentMenu.X, Y or ParentMenu.Y)
+			local Menu = RageUI.CreateMenu(Title or ParentMenu.Title, Subtitle or ParentMenu.Subtitle, X or ParentMenu.X, Y or ParentMenu.Y)
 			Menu.Parent = ParentMenu
 			Menu.WidthOffset = ParentMenu.WidthOffset
 			Menu.Safezone = ParentMenu.Safezone
@@ -122,7 +122,7 @@ end
 ---@return nil
 ---@public
 function RageUIMenus:SetSubtitle(Subtitle)
-	self.Subtitle = string.upper(Subtitle) or string.upper(self.Subtitle)
+	self.Subtitle = Subtitle or self.Subtitle
 	if string.starts(self.Subtitle, "~") then
 		self.PageCounterColour = string.lower(string.sub(self.Subtitle, 1, 3))
 	else
