@@ -199,3 +199,64 @@ function Panels:PercentagePanel(Percent, Header, Min, Max, Action, Index)
         Action(Hovered, Selected, Percent)
     end
 end
+
+function Panels:ColourPanel(Title, Colours, Min, Current, Action, Index)
+    local CurrentMenu = RageUI.CurrentMenu
+
+    if CurrentMenu.Index == Index then
+        local Max = (#Colours > 9) and 9 or #Colours
+        local Hovered = Graphics.IsMouseInBounds(CurrentMenu.X + 15 + CurrentMenu.SafeZoneSize.X + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 55 + CurrentMenu.SafeZoneSize.Y + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, (44.5 * Max), 44.5)
+        local LeftArrowHovered = Graphics.IsMouseInBounds(CurrentMenu.X + 7.5 + CurrentMenu.SafeZoneSize.X + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 15 + CurrentMenu.SafeZoneSize.Y + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 30, 30)
+        local RightArrowHovered = Graphics.IsMouseInBounds(CurrentMenu.X + 393.5 + CurrentMenu.SafeZoneSize.X + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 15 + CurrentMenu.SafeZoneSize.Y + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 30, 30)
+        local Selected = false
+        Graphics.Sprite("commonmenu", "gradient_bgd", CurrentMenu.X, CurrentMenu.Y + 4 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 431 + CurrentMenu.WidthOffset, 112)
+        Graphics.Sprite("commonmenu", "arrowleft", CurrentMenu.X + 7.5 + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 15 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 30, 30)
+        Graphics.Sprite("commonmenu", "arrowright", CurrentMenu.X + 393.5 + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 15 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 30, 30)
+
+        Graphics.Rectangle(CurrentMenu.X + 15 + (44.5 * (Current - Min)) + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 47 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 44.5, 8, 245, 245, 245, 255)
+
+        for i = 1,Max do
+            Graphics.Rectangle(CurrentMenu.X + 15 + (44.5 * (i - 1)) + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 55 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 44.5, 44.5, table.unpack(Colours[Min + i - 1]))
+        end
+
+        Graphics.Text((Title and Title or "") .. " (" .. Current .. "/" .. #Colours .. ")", CurrentMenu.X + 215.5 + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 15 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 0, 0.35, 245, 245, 245, 255, 1)
+
+        if Hovered or LeftArrowHovered or RightArrowHovered then
+            if RageUI.Settings.Controls.Click.Active then
+                Selected = true
+
+                if LeftArrowHovered then
+                    Current = Current - 1
+                    if Current < 1 then
+                        Current = #Colours
+                        Min = #Colours - Max + 1
+                    elseif Current < Min then
+                        Min = Min - 1
+                    end
+                elseif RightArrowHovered then
+                    Current = Current + 1
+                    if Current > #Colours then
+                        Current = 1
+                        Min = 1
+                    elseif Current > Min + Max - 1 then
+                        Min = Min + 1
+                    end
+                elseif Hovered then
+                    for i = 1,Max do
+                        if Graphics.IsMouseInBounds(CurrentMenu.X + 15 + (44.5 * (i - 1)) + CurrentMenu.SafeZoneSize.X + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 55 + CurrentMenu.SafeZoneSize.Y + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 44.5, 44.5) then
+                            Current = Min + i - 1
+                        end
+                    end
+                end
+            end
+        end
+
+        RageUI.ItemOffset = RageUI.ItemOffset + 112 + 4
+
+        if (Hovered or LeftArrowHovered or RightArrowHovered) and Selected then
+            Audio.PlaySound(RageUI.Settings.Audio.Select.audioName, RageUI.Settings.Audio.Select.audioRef)
+        end
+
+        Action((Hovered or LeftArrowHovered or RightArrowHovered), Selected, Min, Current)
+    end
+end
