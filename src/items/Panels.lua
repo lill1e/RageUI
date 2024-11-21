@@ -31,6 +31,16 @@ local Grid = {
     },
 }
 
+local Percentage = {
+    Background = { Dictionary = "commonmenu", Texture = "gradient_bgd", Y = 4, Width = 431, Height = 76 },
+    Bar = { X = 9, Y = 50, Width = 413, Height = 10 },
+    Text = {
+        Left = { X = 25, Y = 15, Scale = 0.35 },
+        Middle = { X = 215.5, Y = 15, Scale = 0.35 },
+        Right = { X = 398, Y = 15, Scale = 0.35 },
+    },
+}
+
 local function UIGridPanel(Type, StartedX, StartedY, TopText, BottomText, LeftText, RightText, Action, Index)
     local CurrentMenu = RageUI.CurrentMenu
     if (CurrentMenu.Index == Index) then
@@ -143,4 +153,49 @@ end
 ---@return void
 function Panels:GridVertical(StartedY, TopText, BottomText, Action, Index)
     UIGridPanel(GridType.Vertical, nil, StartedY, TopText, BottomText, nil, nil, Action, Index)
+end
+
+function Panels:PercentagePanel(Percent, Header, Min, Max, Action, Index)
+    local CurrentMenu = RageUI.CurrentMenu
+    if CurrentMenu.Index == Index then
+        local Hovered = Graphics.IsMouseInBounds(CurrentMenu.X + 9 + CurrentMenu.SafeZoneSize.X, CurrentMenu.Y + 50 + CurrentMenu.SafeZoneSize.Y + CurrentMenu.SubtitleHeight + RageUI.ItemOffset - 4, 413 + CurrentMenu.WidthOffset, 10 + 8)
+        local Selected = false
+        local Progress = 413
+
+        if Percent < 0.0 then Percent = 0.0 elseif Percent > 1.0 then Percent = 1.0 end
+
+        Progress = Progress * Percent
+
+        Graphics.Sprite("commonmenu", "gradient_bgd", CurrentMenu.X, CurrentMenu.Y + Grid.Background.Y + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 431 + CurrentMenu.WidthOffset, 76)
+        Graphics.Rectangle(CurrentMenu.X + 9 + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 50 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 413, 10, 87, 87, 87, 255)
+        Graphics.Rectangle(CurrentMenu.X + 9 + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 50 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, Progress, 10, 245, 245, 245, 255)
+
+        Graphics.Text(Header or "Opacity", CurrentMenu.X + 215.5 + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 15 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 0, 0.35, 245, 245, 245, 255, 1)
+        Graphics.Text(Min or "0%", CurrentMenu.X + 25 + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 15 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 0, 0.35, 245, 245, 245, 255, 1)
+        Graphics.Text(Max or "100%", CurrentMenu.X + 398 + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + 15 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 0, 0.35, 245, 245, 245, 255, 1)
+
+        if Hovered and IsDisabledControlPressed(0, 24) then
+            Selected = true
+
+            Progress = math.round(math.round(GetControlNormal(0, 239) * 1920) - CurrentMenu.SafeZoneSize.X - (CurrentMenu.X + 9 + (CurrentMenu.WidthOffset / 2)))
+
+            if Progress < 0 then
+                Progress = 0
+            elseif Progress > 413 then
+                Progress = 413
+            end
+
+            Percent = math.round(Progress/413, 2)
+        end
+
+        RageUI.ItemOffset = RageUI.ItemOffset + 76 + 4
+
+        if Hovered and Selected then
+            local sound = RageUI.Settings.Audio
+
+            Audio.PlaySound(RageUI.Settings.Audio.Slider.audioName, RageUI.Settings.Audio.Slider.audioRef, true)
+        end
+
+        Action(Hovered, Selected, Percent)
+    end
 end
