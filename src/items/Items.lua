@@ -497,3 +497,70 @@ function Items:Heritage(Mum, Dad)
     Graphics.Sprite("char_creator_portraits", Mum, CurrentMenu.X + 25 + (CurrentMenu.WidthOffset / 2), CurrentMenu.Y + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 228, 228)
     RageUI.ItemOffset = RageUI.ItemOffset + 228
 end
+
+---AddList
+---@param Label string
+---@param ItemIndex number
+---@param Description string
+---@param Actions fun(Index:number, onSelected:boolean, onListChange:boolean))
+function Items:HeritageSlider(Label, ItemIndex, Description, Actions)
+    local CurrentMenu = RageUI.CurrentMenu
+    local Option = RageUI.Options + 1
+    local preWorkIndex = ItemIndex
+
+    local items = {}
+    for i=1,10 do
+        table.insert(items, i)
+    end
+
+    if CurrentMenu.Pagination.Minimum <= Option and CurrentMenu.Pagination.Maximum >= Option then
+        local Active = CurrentMenu.Index == Option
+        -- local LeftArrowHovered, RightArrowHovered = false, false
+
+        RageUI.ItemsSafeZone(CurrentMenu)
+
+        local Hovered = false
+        local RightOffset = 0
+
+        if Active then
+            Graphics.Sprite("commonmenu", "gradient_nav", CurrentMenu.X, CurrentMenu.Y + 0 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 431 + CurrentMenu.WidthOffset, 38)
+        end
+
+        Graphics.Text(Label, CurrentMenu.X + 8, CurrentMenu.Y + 3 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 0, 0.33, Active and 0 or 245, Active and 0 or 245, Active and 0 or 245, 255)
+        Graphics.Sprite("mpleaderboard", "leaderboard_female_icon", CurrentMenu.X + 215 + CurrentMenu.WidthOffset - RightOffset, CurrentMenu.Y + 0 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 40, 40, 0, Active and 0 or 255, Active and 0 or 255, Active and 0 or 255, 255)
+        Graphics.Sprite("mpleaderboard", "leaderboard_male_icon", CurrentMenu.X + 395 + CurrentMenu.WidthOffset - RightOffset, CurrentMenu.Y + 0 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 40, 40, 0, Active and 0 or 255, Active and 0 or 255, Active and 0 or 255, 255)
+
+        Graphics.Rectangle(CurrentMenu.X + 250 + CurrentMenu.WidthOffset - RightOffset, CurrentMenu.Y + 14.5 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 150, 9, 4, 32, 57, 255)
+        Graphics.Rectangle(CurrentMenu.X + 250 + (((150 - 75) / (#items)) * (ItemIndex)) + CurrentMenu.WidthOffset - RightOffset, CurrentMenu.Y + 14.5 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 75, 9, 57, 116, 200, 255)
+        Graphics.Rectangle(CurrentMenu.X + 323.5 + CurrentMenu.WidthOffset, CurrentMenu.Y + 9 + CurrentMenu.SubtitleHeight + RageUI.ItemOffset, 2.5, 20, 245, 245, 245, 255)
+
+        RageUI.ItemOffset = RageUI.ItemOffset + 38
+
+        if Active then
+            RageUI.ItemsDescription(Description)
+            
+            if CurrentMenu.Controls.Left.Active and not CurrentMenu.Controls.Right.Active then
+                ItemIndex = ItemIndex - 0.1
+                if ItemIndex < 0.1 then
+                    ItemIndex = 0.0
+                else
+                    Audio.PlaySound(RageUI.Settings.Audio.Slider.audioName, RageUI.Settings.Audio.Slider.audioRef, true)
+                end
+            elseif not CurrentMenu.Controls.Left.Active and CurrentMenu.Controls.Right.Active then
+                ItemIndex = ItemIndex + 0.1
+                if ItemIndex > #items then
+                    ItemIndex = 10
+                else
+                    Audio.PlaySound(RageUI.Settings.Audio.Slider.audioName, RageUI.Settings.Audio.Slider.audioRef, true)
+                end
+            end
+
+            if CurrentMenu.Controls.Select.Active then
+                Audio.PlaySound(RageUI.Settings.Audio.Select.audioName, RageUI.Settings.Audio.Select.audioRef, false)
+            end
+        end
+
+        Actions(ItemIndex, Active and CurrentMenu.Controls.Select.Active, ItemIndex ~= preWorkIndex)
+    end
+    RageUI.Options = RageUI.Options + 1
+end
