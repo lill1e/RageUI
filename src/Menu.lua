@@ -117,6 +117,14 @@ function RageUI.CreateSubMenu(ParentMenu, Title, Subtitle, X, Y, TextureDictiona
 	end
 end
 
+---SetTitle
+---@param Title string
+---@return nil
+---@public
+function RageUIMenus:SetTitle(Title)
+    self.Title = Title
+end
+
 ---SetSubtitle
 ---@param Subtitle string
 ---@return nil
