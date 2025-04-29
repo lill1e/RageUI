@@ -125,6 +125,12 @@ function RageUIMenus:SetTitle(Title)
     self.Title = Title
 end
 
+---ToggleMouse
+---@return nil
+---@public
+function RageUIMenus:ToggleMouse()
+    self.EnableMouse = not self.EnableMouse
+end
 ---SetSubtitle
 ---@param Subtitle string
 ---@return nil
