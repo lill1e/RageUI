@@ -117,6 +117,13 @@ function RageUI.CreateSubMenu(ParentMenu, Title, Subtitle, X, Y, TextureDictiona
 	end
 end
 
+---ToggleMouse
+---@return nil
+---@public
+function RageUIMenus:ToggleMouse()
+    self.EnableMouse = not self.EnableMouse
+end
+
 ---SetTitle
 ---@param Title string
 ---@return nil
