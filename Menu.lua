@@ -132,6 +132,14 @@ function RageUIMenus:SetTitle(Title)
     self.Title = Title
 end
 
+---SetBanner
+---@param Banner string
+---@return nil
+---@public
+function RageUIMenus:SetBanner(Banner)
+    self.Sprite = { Dictionary = Banner, Texture = Banner, Color = { R = self.Sprite.R, G = self.Sprite.G, B = self.Sprite.B, A = self.Sprite.A } }
+end
+
 ---ToggleMouse
 ---@return nil
 ---@public
