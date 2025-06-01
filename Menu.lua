@@ -4,6 +4,16 @@
 --- created at [24/05/2021 10:02]
 ---
 
+local aspectRatioRangeX = {
+    1400, 1175, 950
+}
+function RightAlignX()
+    if math.floor(GetAspectRatio()) > #aspectRatioRangeX then
+        return 0
+    else
+        return aspectRatioRangeX[math.floor(GetAspectRatio())]
+    end
+end
 
 ---CreateMenu
 ---@param Title string
@@ -38,7 +48,7 @@ function RageUI.CreateMenu(Title, Subtitle, X, Y, TextureDictionary, TextureName
 	Menu.SubtitleHeight = -37
 	Menu.Description = nil
 	Menu.DescriptionHeight = RageUI.Settings.Items.Description.Background.Height
-	Menu.X = X or 0
+	Menu.X = X or RightAlignX()
 	Menu.Y = Y or 0
 	Menu.Parent = nil
 	Menu.WidthOffset = 0
