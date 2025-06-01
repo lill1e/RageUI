@@ -142,6 +142,13 @@ function RageUIMenus:SetTitle(Title)
     self.Title = Title
 end
 
+---ResetBanner
+---@return nil
+---@public
+function RageUIMenus:ResetBanner()
+    self.Sprite = { Dictionary = "commonmenu", Texture = "interaction_bgd", Color = { R = self.Sprite.R, G = self.Sprite.G, B = self.Sprite.B, A = self.Sprite.A } }
+end
+
 ---SetBanner
 ---@param Banner string
 ---@return nil
